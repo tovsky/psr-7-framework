@@ -2,7 +2,7 @@
 
 use Framework\Http\Request;
 
-require __DIR__ . '/../src/Framework/Http/Request.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 ### Initialization
 $request = new Request();
