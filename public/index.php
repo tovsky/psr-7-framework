@@ -5,7 +5,7 @@ use Framework\Http\Request;
 require __DIR__ . '/../vendor/autoload.php';
 
 ### Initialization
-$request = new Request();
+$request = new Request($_GET, $_POST);
 
 
 ### Action
