@@ -12,9 +12,11 @@ class Request
         return $this->queryParams;
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): self
     {
         $this->queryParams = $query;
+
+        return $this;
     }
 
     public function getParsedBody()
@@ -22,8 +24,10 @@ class Request
         return $this->parsedBody;
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): self
     {
         $this->parsedBody = $data;
+
+        return $this;
     }
 }

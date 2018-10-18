@@ -5,9 +5,9 @@ use Framework\Http\Request;
 require __DIR__ . '/../vendor/autoload.php';
 
 ### Initialization
-$request = new Request();
-$request->withQueryParams($_GET);
-$request->withParsedBody($_POST);
+$request = (new Request())
+    ->withQueryParams($_GET)
+    ->withParsedBody($_POST);
 
 
 ### Action
