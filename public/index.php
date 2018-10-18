@@ -1,13 +1,11 @@
 <?php
 
-use Framework\Http\Request;
+use Framework\Http\RequestFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 ### Initialization
-$request = (new Request())
-    ->withQueryParams($_GET)
-    ->withParsedBody($_POST);
+$request = RequestFactory::fromGlobals();
 
 
 ### Action
