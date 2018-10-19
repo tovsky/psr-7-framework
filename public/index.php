@@ -1,6 +1,7 @@
 <?php
 
 use Framework\Http\RequestFactory;
+use Framework\Http\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -11,6 +12,15 @@ $request = RequestFactory::fromGlobals();
 ### Action
 $name = $request->getQueryParams()['name'] ?? 'Guest';
 
-header('X-developer: pavel02');
+$response = (new Response('Hello, ' . $name . '!'))
+    ->withHeader('X-developer', 'pavel02');
 
-echo 'Hello, ' . $name . '!';
+
+### Sending
+
+header('HTTP/1.0 ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase());
+foreach ($response->getHeaders() as $name => $value) {
+    header($name . ':' . $value);
+}
+
+echo $response->getBody();
