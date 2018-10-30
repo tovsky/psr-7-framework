@@ -2,8 +2,9 @@
 
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
+use Psr\Http\Message\ServerRequestInterface;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -16,22 +17,37 @@ $request = ServerRequestFactory::fromGlobals();
 $path = $request->getUri()->getPath();
 
 if ($path === '/') {
-    $name = $request->getQueryParams()['name'] ?? 'Guest';
-    $response = new HtmlResponse('Hello, ' . $name . '!');
+    $action = function (ServerRequestInterface $request) {
+        $name = $request->getQueryParams()['name'] ?? 'Guest';
+        return new HtmlResponse('Hello, ' . $name . '!');
+    };
 } elseif ($path === '/about') {
-    $response = new HtmlResponse('I am a simple site');
+    $action = function (ServerRequestInterface $request) {
+        return new HtmlResponse('I am a simple site');
+    };
 } elseif ($path === '/blog') {
-    $response = new JsonResponse([
-        ['id' => 2, 'title' => 'The Second Post'],
-        ['id' => 1, 'title' => 'The First Post'],
-    ]);
+    $action = function (ServerRequestInterface $request) {
+        return new JsonResponse([
+            ['id' => 2, 'title' => 'The Second Post'],
+            ['id' => 1, 'title' => 'The First Post'],
+        ]);
+    };
 } elseif (preg_match('#^/blog/(?P<id>\d+)$#i', $path, $matches)) {
-    $id = $matches['id'];
-    if ($id > 2) {
-        $response = new JsonResponse(['error' => 'Undefined page'], 404);
-    } else {
-        $response = new JsonResponse(['id' => $id, 'title' => 'Post #' . $id]);
-    }
+    $request = $request->withAttribute('id', $matches['id']);
+
+    $action = function (ServerRequestInterface $request) {
+        $id = $request->getAttribute('id');
+
+        if ($id > 2) {
+            return new JsonResponse(['error' => 'Undefined page'], 404);
+        }
+
+        return new JsonResponse(['id' => $id, 'title' => 'Post #' . $id]);
+    };
+}
+
+if ($action) {
+    $response = $action($request);
 } else {
     $response = new HtmlResponse('Undefined page', 404);
 }
