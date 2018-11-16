@@ -1,16 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: pavell
- * Date: 16.11.18
- * Time: 17:49
- */
 
-namespace Framework\Http\Router;
+namespace Framework\Http\Router\Route;
 
+use Framework\Http\Router\Result;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Route
+class RegexpRoute implements Route
 {
     private $name;
     private $pattern;
